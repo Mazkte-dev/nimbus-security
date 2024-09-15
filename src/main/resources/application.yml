@@ -1,38 +1,22 @@
-server:
-  port: 8080 # Gateway port
-
 spring:
   application:
-    name: api-gateway
-  cloud:
-    gateway:
-      routes:
-        - id: authentication-service
-          uri: http://localhost:8081 # Authentication service URL
-          predicates:
-            - Path=/api/auth/**
-        - id: task-management-service
-          uri: http://localhost:8082 # Task management service URL
-          predicates:
-            - Path=/api/tasks/**
-          filters:
-            - JwtAuthenticationFilter
-        - id: websocket-route # Example for WebSockets
-          uri: ws://localhost:8083 # WebSocket service URL
-          predicates:
-            - Path=/ws/**
-      default-filters:
-        - name: RequestRateLimiter
-          args:
-            redis-rate-limiter.replenishRate: 10
-            redis-rate-limiter.burstCapacity: 20
-            key-resolver: '#{@ipKeyResolver}'
-
+    name: security-management
   data:
-    redis:
-      url: redis://localhost:6379
-
+    mongodb:
+      uri: mongodb://mazkte:t3st@localhost:27017/?authMechanism=SCRAM-SHA-256
+      database: security-mgnt
+  cloud:
+    vault:
+      enabled: true
+      uri: http://localhost:8200
+      token: MASTER-VAULT
+      kv:
+        backend: secret
+        default-context: security-mgnt
 
 jwt:
   secret: "CKqHITrMPzepvWmczHw+O4QpWgYKlX0b3hqrBxYWu2UWN9Xrr2zKq8ziOqMOfYiLSP5pJYR2FOoJpRGLUrGVeQ=="
-  expiration: 60000
+  expiration: 60
+
+server:
+  port: 8081

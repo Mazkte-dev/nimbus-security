@@ -1,13 +1,13 @@
-package com.encora.samples.nimbus.apigateway;
+package com.encora.samples.nimbus.security.auth;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ApiGatewayApplication {
+public class SecurityApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ApiGatewayApplication.class, args);
+		SpringApplication.run(SecurityApplication.class, args);
 	}
 
 }
