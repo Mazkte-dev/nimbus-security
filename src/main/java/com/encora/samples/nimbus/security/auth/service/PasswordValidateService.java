@@ -4,10 +4,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+/**
+ * Service to validate password complexity rules.
+ */
 @Service
 @Slf4j
 public class PasswordValidateService {
 
+  /**
+   * Validates if the password meets the complexity requirements.
+   *
+   * @param password The password to validate.
+   * @return A Mono emitting true if the password is valid, false otherwise.
+   */
   public Mono<Boolean> validatePassword(String password) {
 
     return Mono.create(sink -> {
@@ -23,7 +32,7 @@ public class PasswordValidateService {
         isValid = false;
       }
 
-      if (!password.matches(".*[0-9].*")) {
+      if (!password.matches(".*\\d.*")) {
         log.warn("La contraseña debe contener al menos un número.");
         isValid = false;
       }
@@ -39,3 +48,4 @@ public class PasswordValidateService {
 
 
 }
+

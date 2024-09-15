@@ -15,21 +15,27 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+/**
+ * Filter to authenticate requests based on JWT (JSON Web Token).
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter implements WebFilter {
 
     private final JwtUtils jwtUtils;
 
+    /**
+     * Filters incoming requests and authenticates the user if a valid JWT is present.
+     *
+     * @param exchange The ServerWebExchange object representing the current request.
+     * @param chain    The WebFilterChain to continue processing the request.
+     * @return A Mono<Void> that completes when the filter chain has finished processing.
+     */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String jwt = parseJwt(exchange.getRequest());
         if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
             String userId = jwtUtils.getUserIdFromJwtToken(jwt);
-
-            // You'll need to fetch user details (e.g., roles) from your database here
-            // based on the userId and set them in the Authentication object.
-            // For simplicity, I'm just setting the userId as the principal.
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(userId, null, null);
             return chain.filter(exchange).contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication));
@@ -37,6 +43,12 @@ public class JwtAuthenticationFilter implements WebFilter {
         return chain.filter(exchange);
     }
 
+    /**
+     * Parses the JWT from the Authorization header of the request.
+     *
+     * @param request The ServerHttpRequest object representing the current request.
+     * @return The JWT string if found, otherwise null.
+     */
     private String parseJwt(ServerHttpRequest request) {
         String headerAuth = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
@@ -45,3 +57,4 @@ public class JwtAuthenticationFilter implements WebFilter {
         return null;
     }
 }
+

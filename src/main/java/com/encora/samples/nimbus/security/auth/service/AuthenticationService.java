@@ -17,6 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+/**
+ * Service to handle authentication and registration requests.
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -31,14 +34,19 @@ public class AuthenticationService {
 
   private final PasswordValidateService passwordValidateService;
 
-
+  /**
+   * Authenticates a user with the provided credentials.
+   *
+   * @param authenticationRequest The authentication request containing the user's email and password.
+   * @return A Mono emitting an AuthenticationResponse with a JWT token if the authentication is successful.
+   */
   public Mono<AuthenticationResponse> authenticateUser(AuthenticationRequest authenticationRequest) {
     return userRepository.findByEmail(authenticationRequest.getEmail())
             .filter(user -> passwordEncoder.matches(authenticationRequest.getPassword(),
                     user.getPasswordHash()))
             .map(user -> AuthenticationResponse.builder()
-                      .token(jwtUtils.generateJwtToken(user.getId()))
-                      .build()
+                    .token(jwtUtils.generateJwtToken(user.getId()))
+                    .build()
             )
             .switchIfEmpty(Mono.error(new SecurityException("Invalid username or password")))
             .onErrorResume(throwable -> {
@@ -50,6 +58,12 @@ public class AuthenticationService {
             });
   }
 
+  /**
+   * Registers a new user with the provided sign-up information.
+   *
+   * @param signUpRequest The sign-up request containing the user's email, password.
+   * @return  A Mono emitting a SignUpResponse if the registration is successful.
+   */
   public Mono<SignUpResponse> registerUser(SignUpRequest signUpRequest) {
     return userRepository.findByEmail(signUpRequest.getEmail())
             .switchIfEmpty(Mono.just( new User()))
@@ -80,3 +94,4 @@ public class AuthenticationService {
             });
   }
 }
+
