@@ -25,7 +25,7 @@ public class SecurityConfig {
         return http
                 .csrf(csrfSpec -> csrfSpec.disable())
                 .authorizeExchange(authorizeExchangeSpec ->
-                        authorizeExchangeSpec.pathMatchers(HttpMethod.POST, "/api/auth/**")
+                        authorizeExchangeSpec.pathMatchers(HttpMethod.POST, "/nimbus/api/v1.0/security/**")
                                 .permitAll()
                                 .anyExchange()
                                 .authenticated()

@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>com.encora.samples.nimbus</groupId>
-    <artifactId>security-auth</artifactId>
+    <artifactId>nimbus-security-auth</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>security-auth</name>
     <description>Nimbus application security</description>
