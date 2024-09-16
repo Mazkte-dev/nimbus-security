@@ -11,6 +11,7 @@ import com.encora.samples.nimbus.security.auth.model.domain.User;
 import com.encora.samples.nimbus.security.auth.repository.UserRepository;
 import com.encora.samples.nimbus.security.auth.utils.JwtUtils;
 import io.micrometer.common.util.StringUtils;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,6 +45,10 @@ public class AuthenticationService {
     return userRepository.findByEmail(authenticationRequest.getEmail())
             .filter(user -> passwordEncoder.matches(authenticationRequest.getPassword(),
                     user.getPasswordHash()))
+            .flatMap(user -> {
+              user.getAudit().setLastLogin(LocalDateTime.now());
+              return userRepository.save(user);
+            })
             .map(user -> AuthenticationResponse.builder()
                     .token(jwtUtils.generateJwtToken(user.getId()))
                     .build()
